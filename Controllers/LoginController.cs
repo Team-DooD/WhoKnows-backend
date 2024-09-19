@@ -13,6 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace WhoKnows_backend.Controllers
 {
@@ -21,11 +22,13 @@ namespace WhoKnows_backend.Controllers
     public class LoginController : ControllerBase
     {
         private readonly WhoknowsContext _context;
+        private readonly PasswordHasher<User> _passwordHasher;
 
         // Inject the DbContext into the controllerssss
         public LoginController(WhoknowsContext context)
         {
             _context = context;
+            _passwordHasher = new PasswordHasher<User>();
         }
 
         [HttpPost("login")]
@@ -38,7 +41,18 @@ namespace WhoKnows_backend.Controllers
 
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == request.Username);
 
-            if (user == null || user.Password != request.Password) // Replace with hashed password check
+            if (user == null)
+            {
+                return Unauthorized("Invalid username or password");
+            }
+
+            // Initialize PasswordHasher
+            var passwordHasher = new PasswordHasher<User>();
+
+            // Verify the hashed password
+            var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.Password, request.Password);
+
+            if (passwordVerificationResult == PasswordVerificationResult.Failed)
             {
                 return Unauthorized("Invalid username or password");
             }
@@ -57,6 +71,7 @@ namespace WhoKnows_backend.Controllers
 
             return Ok(new { Token = tokenString });
         }
+
         public class LoginRequest
         {
             public string Username { get; set; } = string.Empty;
@@ -88,10 +103,39 @@ namespace WhoKnows_backend.Controllers
 
             return Ok("You are authenticated");
         }
-    
 
 
-    private bool VerifyPassword(string storedPassword, string inputPassword)
+        // Register new user endpoint
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] DTO.RegisterRequest registerRequest)
+        {
+            if (registerRequest == null || string.IsNullOrEmpty(registerRequest.Username) || string.IsNullOrEmpty(registerRequest.Password))
+            {
+                return BadRequest("Invalid registration request.");
+            }
+            // Check if user already exists
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == registerRequest.Username);
+            if (existingUser != null)
+            {
+                return BadRequest("Username already taken.");
+            }
+            // Create new user and hash the password
+            var newUser = new User
+            {
+                Username = registerRequest.Username,
+                Email = registerRequest.Email
+            };
+            // Hash the password and store the hash
+            newUser.Password = _passwordHasher.HashPassword(newUser, registerRequest.Password);
+            // Add the new user to the database
+            _context.Users.Add(newUser);
+            await _context.SaveChangesAsync();
+            return Ok("User registered successfully.");
+        }
+
+
+
+        private bool VerifyPassword(string storedPassword, string inputPassword)
         {
             // Implement your password verification logic here (e.g., hashing)
             return storedPassword == inputPassword; // Simplified for demonstration
