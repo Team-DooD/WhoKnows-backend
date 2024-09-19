@@ -27,7 +27,7 @@ namespace WhoKnows_backend.Controllers
                     .Where(p => p.Language == language && p.Content.Contains(q))
                     .ToListAsync();
 
-            return Ok(searchResults); // Replace with View if rendering HTML
+            return Ok(searchResults); 
         }
 
         // API endpoint for search
