@@ -51,14 +51,6 @@ jobs:
           ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no user@remote-vm << 'EOF'
             cd /Backend
             dotnet Whoknows-backend.dll database update # Run migrations here
-      #     EOF
+          EOF
 
-      # - name: Deploy and Run Migrations on Remote VM
-      #   env:
-      #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # SSH private key for authentication
-      #   run: |
-      #     scp -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no -r ./publish user@remote-vm:/Backend
-      #     ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no user@remote-vm << 'EOF'
-      #       cd /Backend
-      #       dotnet YourProject.dll database update # Replace `YourProject.dll` with your DLL name
-      #     EOF
+
