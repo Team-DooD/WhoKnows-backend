@@ -1,9 +1,15 @@
 name: Deploy ASP.NET Core Backend
 
+# on:
+#   push:
+#     branches:
+#       - main # Change to the branch you want to deploy from
+
 on:
-  push:
-    branches:
-      - main # Change to the branch you want to deploy from
+  workflow_run:
+    workflows: ["Database Migration"] # Name of the first workflow
+    types:
+      - completed # Trigger only when the migration workflow completes
 
 jobs:
   deploy-backend:
