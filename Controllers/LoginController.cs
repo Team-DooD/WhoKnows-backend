@@ -84,10 +84,15 @@ namespace WhoKnows_backend.Controllers
         [HttpPost("logout")]
         public IActionResult Logout()
         {
+            if (Request.Cookies.ContainsKey(".AspNetCore.Antiforgery.tib6llArwhY"))
+            {
+                Response.Cookies.Delete(".AspNetCore.Antiforgery.tib6llArwhY");
+            }
             // Clear session
             HttpContext.Session.Clear();
 
-            return Ok("Logged out successfully");
+            return Ok("Logged out successfully");            
+
         }
 
         // Example of an authenticated endpoint
