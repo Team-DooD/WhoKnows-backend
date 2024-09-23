@@ -49,8 +49,9 @@ jobs:
             # Remove old files from the remote VM
             ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
               rm -rf /Backend/publish/*
+              mkdir newDir
               echo \"Old files deleted from /Backend/publish\"
-            EOF
+            
             
             # Copy the new publish folder to the remote VM
             scp -i key.pem -o StrictHostKeyChecking=no -r ./publish azureuser@40.87.131.145:Backend/
@@ -58,12 +59,12 @@ jobs:
             # Start the .NET application on the remote server
             ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
               cd Backend/publish/
-              nohup dotnet \"Whoknows backend.dll\" &
+              dotnet \"Whoknows backend.dll\" &
               echo \"Application started successfully\"
-            EOF
+            
           "
 
-                - name: Run EF Core Migrations
+        #       - name: Run EF Core Migrations
         # env:
         #   SSH_PRIVATE_KEY2: ${{ secrets.SSH_PRIVATE_KEY2 }} # SSH private key for authentication
         # run: |
