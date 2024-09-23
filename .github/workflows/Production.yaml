@@ -55,6 +55,8 @@ jobs:
               echo \"Old files deleted from /Backend/publish\"
             REMOTE
             
+            ls -al
+
             # Copy the new publish folder to the remote VM
             scp -i key.pem -o StrictHostKeyChecking=no -r ./publish/ azureuser@40.87.131.145:Backend/
             
