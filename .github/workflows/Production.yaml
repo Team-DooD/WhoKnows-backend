@@ -50,10 +50,10 @@ jobs:
             ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
               rm -rf /Backend/publish/*
               echo \"Old files deleted from /Backend/publish\"
-              exit
+            EOF
             
             # Copy the new publish folder to the remote VM
-            scp -i key.pem -o StrictHostKeyChecking=no -r ./publish azureuser@40.87.131.145:Backend/ && \
+            scp -i key.pem -o StrictHostKeyChecking=no -r ./publish azureuser@40.87.131.145:Backend/
             
             # Start the .NET application on the remote server
             ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
