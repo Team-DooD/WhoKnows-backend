@@ -50,7 +50,7 @@ jobs:
             ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
               rm -rf /Backend/publish/*
               echo \"Old files deleted from /Backend/publish\"
-            EOF && \
+              exit
             
             # Copy the new publish folder to the remote VM
             scp -i key.pem -o StrictHostKeyChecking=no -r ./publish azureuser@40.87.131.145:Backend/ && \
