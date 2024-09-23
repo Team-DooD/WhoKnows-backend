@@ -4,7 +4,7 @@ name: Database Migration
 on:
   push:
     branches:
-      - main # or your desired branch
+      - main
 
 jobs:
   deploy:
@@ -17,7 +17,7 @@ jobs:
       - name: Set up .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "8.x" # specify your .NET version
+          dotnet-version: "8.x"
 
       - name: Restore dependencies
         run: dotnet restore
@@ -38,21 +38,24 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # SSH private key for authentication
         run: |
-
-          echo "$SSH_PRIVATE_KEY" > key.pem
+          # Ensure correct formatting of SSH key and remove Windows line endings
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > key.pem
           chmod 600 key.pem
 
+          # SSH into the remote VM and remove old files
           ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
             rm -rf /Backend/publish/*
-            echo "Old files delete from /Backend/publish"
+            echo "Old files deleted from /Backend/publish"
           EOF
 
-          scp -i key.pem -o StrictHostKeyChecking=no -r ./publish azureuser@40.87.131.145:Backend/
+          # Copy the new publish folder to the remote VM
+          scp -i key.pem -o StrictHostKeyChecking=no -r ./publish azureuser@40.87.131.145:/Backend/
 
+          # Start the .NET application on the remote server
           ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
-            cd Backend/publish/
+            cd /Backend/publish/
             dotnet "Whoknows backend.dll" & 
-            echo "Applicaiton started successfully"
+            echo "Application started successfully"
           EOF
 
       # Cleanup SSH key file after use
@@ -63,7 +66,7 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # SSH private key for authentication
         run: |
-          ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no user@remote-vm << 'EOF'
+          ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
             cd /Backend
             dotnet "Whoknows backend.dll" database update # Run migrations here
           EOF
