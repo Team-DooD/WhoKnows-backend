@@ -1,5 +1,5 @@
 # name: Deploy .NET API to Remote VM
-name: Database Migration
+name: Deploy to VM and Database Migration
 
 on:
   push:
@@ -36,12 +36,12 @@ jobs:
 
       - name: Deploy to remote VM
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # SSH private key for authentication
+          secrets.SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY  }} # SSH private key for authentication
         run: |
           # Ensure correct formatting of SSH key and remove Windows line endings
-          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > key.pem
+          echo "hej verden"
+          echo "$SSH_PRIVATE_KEY" > key.pem
           chmod 600 key.pem
-          cat key.pem
 
           # SSH into the remote VM and remove old files
           ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
@@ -50,11 +50,11 @@ jobs:
           EOF
 
           # Copy the new publish folder to the remote VM
-          scp -i key.pem -o StrictHostKeyChecking=no -r ./publish azureuser@40.87.131.145:/Backend/
+          scp -i key.pem -o StrictHostKeyChecking=no -r ./publish azureuser@40.87.131.145:Backend/
 
           # Start the .NET application on the remote server
           ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
-            cd /Backend/publish/
+            cd Backend/publish/
             dotnet "Whoknows backend.dll" & 
             echo "Application started successfully"
           EOF
