@@ -48,7 +48,9 @@ jobs:
 
       - name: Deploy to remote VM
         run: | # Ensure correct permissions
-          chmod 600 key.pem
+         cat key.pem  
+         chmod 400 key.pem
+          
 
           # SSH into the remote VM and remove old files
           ssh -i key.pem -o StrictHostKeyChecking=no -v azureuser@40.87.131.145 << 'EOF'
