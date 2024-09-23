@@ -46,7 +46,7 @@ jobs:
             echo 'Contents of ./publish directory:' && ls -al ./publish && \
             # Remove old files from the remote VM
             ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 'rm -rf /Backend/publish/* && \
-            [ ! -d /Backend/newDir ] && mkdir /Backend/newDir && \
+            # [ ! -d /Backend/newDir ] && mkdir /Backend/newDir && \
             echo \"Old files deleted from /Backend/publish\"'
           "
 
@@ -60,7 +60,7 @@ jobs:
             echo \"$SSH_PRIVATE_KEY2\" | tr -d '\r' > key.pem && \
             chmod 400 key.pem && \
             # Copy the new publish folder to the remote VM
-            scp -i key.pem -o StrictHostKeyChecking=no -r ./publish/* azureuser@40.87.131.145:/Backend/publish/
+            scp -i key.pem -o StrictHostKeyChecking=no -r ./publish/* azureuser@40.87.131.145:Backend/
           "
 
       - name: Start the .NET application on the remote server
