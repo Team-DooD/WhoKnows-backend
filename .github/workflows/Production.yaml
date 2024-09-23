@@ -20,13 +20,13 @@ jobs:
           dotnet-version: "8.x" # specify your .NET version
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore "./whoknows-backend/WhoKnows backend.cproj"
 
       - name: Build the project
-        run: dotnet build --configuration Release
+        run: dotnet build "./whoknows-backend/WhoKnows backend.cproj" --configuration Release 
 
       - name: Publish the project
-        run: dotnet publish --configuration Release --output ./publish
+        run: dotnet publish "./whoknows-backend/WhoKnows backend.cproj" --configuration Release --output ./publish
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
