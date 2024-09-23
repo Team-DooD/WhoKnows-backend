@@ -34,16 +34,21 @@ jobs:
           name: dotnet-api
           path: ./publish
 
+      - name: Create key.pem inside Docker container
+        env:
+          SSH_PRIVATE_KEY2: ${{ secrets.SSH_PRIVATE_KEY2 }}
+        run: |
+          # Create a Docker container for the key creation
+          docker run --rm -v $PWD:/work -w /work ubuntu:latest bash -c "
+            apt-get update && apt-get install -y openssh-client && \
+            echo \"$SSH_PRIVATE_KEY2\" | tr -d '\r' > key.pem && \
+            chmod 400 key.pem
+          "
+
       - name: Deploy to remote VM
         env:
-          secrets.SSH_PRIVATE_KEY2: ${{ secrets.SSH_PRIVATE_KEY2  }} # SSH private key for authentication
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY2 }} # SSH private key for authentication
         run: |
-          # Ensure correct formatting of SSH key and remove Windows line endings
-          echo "hej verden"
-          echo "$SSH_PRIVATE_KEY2" | tr -d '\r' | tee key.pem
-          chmod 400 key.pem
-
-
           # SSH into the remote VM and remove old files
           ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
             rm -rf /Backend/publish/*
