@@ -41,6 +41,7 @@ jobs:
           # Ensure correct formatting of SSH key and remove Windows line endings
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > key.pem
           chmod 600 key.pem
+          cat key.pem
 
           # SSH into the remote VM and remove old files
           ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
