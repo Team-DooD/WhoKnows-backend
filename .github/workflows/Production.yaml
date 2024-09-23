@@ -45,7 +45,7 @@ jobs:
             # Create the key.pem file from the environment variable
             echo \"$SSH_PRIVATE_KEY2\" | tr -d '\r' > key.pem && \
             chmod 400 key.pem && \
-            echo 'Contents of ./publish directory:' && ls -al ./publish && \
+            echo 'Contents of ./publish directory:' && ls -al && \
 
             # Remove old files from the remote VM and handle existing directory
             ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'REMOTE'
