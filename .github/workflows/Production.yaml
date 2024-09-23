@@ -52,11 +52,10 @@ jobs:
               rm -rf /Backend/publish/*
               # Check if newDir exists, create if it doesn't
               [ ! -d newDir ] && mkdir newDir
-              echo \"Old files deleted from /Backend/publish\" 
-              exit  
+              echo \"Old files deleted from /Backend/publish\"
             REMOTE
             
-            ls -al
+            echo 'Contents of ./publish directory:' && ls -al ./publish && \
 
             # Copy the new publish folder to the remote VM
             scp -i key.pem -o StrictHostKeyChecking=no -r ./publish/ azureuser@40.87.131.145:Backend/
