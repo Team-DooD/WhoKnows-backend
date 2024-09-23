@@ -52,7 +52,8 @@ jobs:
               rm -rf /Backend/publish/*
               # Check if newDir exists, create if it doesn't
               [ ! -d newDir ] && mkdir newDir
-              echo \"Old files deleted from /Backend/publish\"
+              echo \"Old files deleted from /Backend/publish\" 
+              exit  
             REMOTE
             
             ls -al
