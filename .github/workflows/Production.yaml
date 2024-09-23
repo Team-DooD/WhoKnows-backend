@@ -51,7 +51,7 @@ jobs:
 
           ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
             cd Backend/publish/
-            dotnet BalzotWhoKnowsV2.dll & 
+            dotnet "Whoknows backend.dll" & 
             echo "Applicaiton started successfully"
           EOF
 
@@ -65,5 +65,5 @@ jobs:
         run: |
           ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no user@remote-vm << 'EOF'
             cd /Backend
-            dotnet Whoknows-backend.dll database update # Run migrations here
+            dotnet "Whoknows backend.dll" database update # Run migrations here
           EOF
