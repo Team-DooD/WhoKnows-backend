@@ -31,7 +31,7 @@ namespace WhoKnows_backend.Controllers
             _passwordHasher = new PasswordHasher<User>();
         }
 
-        [HttpPost("login")]
+        [HttpPost("")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             if (request == null)
@@ -78,23 +78,6 @@ namespace WhoKnows_backend.Controllers
             public string Password { get; set; } = string.Empty;
         }
 
-
-
-        // Logout endpoint
-        [HttpPost("logout")]
-        public IActionResult Logout()
-        {
-            if (Request.Cookies.ContainsKey(".AspNetCore.Antiforgery.tib6llArwhY"))
-            {
-                Response.Cookies.Delete(".AspNetCore.Antiforgery.tib6llArwhY");
-            }
-            // Clear session
-            HttpContext.Session.Clear();
-
-            return Ok("Logged out successfully");            
-
-        }
-
         // Example of an authenticated endpoint
         [Authorize]
         [HttpGet("authenticated-endpoint")]
@@ -108,36 +91,6 @@ namespace WhoKnows_backend.Controllers
 
             return Ok("You are authenticated");
         }
-
-
-        // Register new user endpoint
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] DTO.RegisterRequest registerRequest)
-        {
-            if (registerRequest == null || string.IsNullOrEmpty(registerRequest.Username) || string.IsNullOrEmpty(registerRequest.Password))
-            {
-                return BadRequest("Invalid registration request.");
-            }
-            // Check if user already exists
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == registerRequest.Username);
-            if (existingUser != null)
-            {
-                return BadRequest("Username already taken.");
-            }
-            // Create new user and hash the password
-            var newUser = new User
-            {
-                Username = registerRequest.Username,
-                Email = registerRequest.Email
-            };
-            // Hash the password and store the hash
-            newUser.Password = _passwordHasher.HashPassword(newUser, registerRequest.Password);
-            // Add the new user to the database
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
-            return Ok("User registered successfully.");
-        }
-
 
 
         private bool VerifyPassword(string storedPassword, string inputPassword)

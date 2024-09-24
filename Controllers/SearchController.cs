@@ -7,7 +7,7 @@ using WhoKnows_backend.Entities;
 namespace WhoKnows_backend.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class SearchController : ControllerBase
     {
         private readonly WhoknowsContext _context;
@@ -18,7 +18,7 @@ namespace WhoKnows_backend.Controllers
         }
 
         // HTML endpoint for search
-        [HttpGet("")]
+        [HttpGet("Html")]
         public async Task<IActionResult> Search([FromQuery] string q = null, [FromQuery] string language = "en")
         {
             var searchResults = string.IsNullOrEmpty(q)
@@ -31,7 +31,7 @@ namespace WhoKnows_backend.Controllers
         }
 
         // API endpoint for search
-        [HttpGet("api/search")]
+        [HttpGet("")]
         public async Task<IActionResult> ApiSearch([FromQuery] string q = null, [FromQuery] string language = "en")
         {
             var searchResults = string.IsNullOrEmpty(q)
