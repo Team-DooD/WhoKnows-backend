@@ -3,7 +3,7 @@ name: Deploy ASP.NET Core Backend
 on:
   push:
     branches:
-      - main # Change to the branch you want to deploy from
+      - main
 
 jobs:
   deploy-backend:
@@ -13,20 +13,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: List root directory after checkout
+        run: ls -R /home/runner/work/WhoKnows-backend/WhoKnows-backend
+
+      - name: List specific directory for debugging
+        run: ls -R "/home/runner/work/WhoKnows-backend/WhoKnows-backend/Whoknows backend"
+
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3 
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "8.x" # Use the appropriate .NET version
+          dotnet-version: "8.x"
 
-      - name: List files for debugging
-        run: ls -R
-          
       - name: Build Backend
-        working-directory: "./Whoknows backend" # Change to your ASP.NET Core project directory
+        working-directory: "/home/runner/work/WhoKnows-backend/WhoKnows-backend/Whoknows backend" # Update based on the correct path
         run: dotnet publish -c Release -o ./publish
-
-      - name: List Published Files for Debugging
-        run: ls -R "Whoknows-backend/Whoknows backend/publish"
 
       - name: Deploy Backend to Azure VM
         uses: appleboy/scp-action@v0.1.4
@@ -34,7 +34,7 @@ jobs:
           host: ${{ secrets.VM_HOST_IP }}
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY2 }}
-          source: "Whoknows-backend/Whoknows backend/publish/*"
+          source: "/home/runner/work/WhoKnows-backend/WhoKnows-backend/Whoknows backend/publish/*" # Update path if needed
           target: ${{ secrets.VM_BACKEND_DIR }}
 
       - name: Restart Backend Service
@@ -44,5 +44,4 @@ jobs:
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY2 }}
           script: |
-            # Commands to restart your backend service
             sudo systemctl restart backend.service
