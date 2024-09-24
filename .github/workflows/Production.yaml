@@ -28,7 +28,7 @@ jobs:
           host: ${{ secrets.VM_HOST_IP }}
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY2 }}
-          source: "./Whoknows backend/publish/*
+          source: "./Whoknows backend/publish/*"
           target: ${{ secrets.VM_BACKEND_DIR }}
 
       - name: Restart Backend Service
