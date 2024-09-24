@@ -19,7 +19,7 @@ jobs:
           dotnet-version: "8.x" # Use the appropriate .NET version
 
       - name: Build Backend
-        working-directory: ./AspNetCoreProject # Change to your ASP.NET Core project directory
+        working-directory: "./Whoknows backend" # Change to your ASP.NET Core project directory
         run: dotnet publish -c Release -o ./publish
 
       - name: Deploy Backend to Azure VM
@@ -28,7 +28,7 @@ jobs:
           host: ${{ secrets.VM_HOST_IP }}
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY2 }}
-          source: "./AspNetCoreProject/publish/*"
+          source: "./Whoknows backend/publish/*
           target: ${{ secrets.VM_BACKEND_DIR }}
 
       - name: Restart Backend Service
