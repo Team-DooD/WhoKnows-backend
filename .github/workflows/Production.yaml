@@ -25,13 +25,16 @@ jobs:
         working-directory: "./Whoknows backend" # Change to your ASP.NET Core project directory
         run: dotnet publish -c Release -o ./publish
 
+      - name: List Published Files for Debugging
+        run: ls -R "Whoknows-backend/Whoknows backend/publish"
+
       - name: Deploy Backend to Azure VM
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.VM_HOST_IP }}
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY2 }}
-          source: "./Whoknows backend/publish/*"
+          source: "Whoknows-backend/Whoknows backend/publish/*"
           target: ${{ secrets.VM_BACKEND_DIR }}
 
       - name: Restart Backend Service
