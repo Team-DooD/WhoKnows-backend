@@ -1,77 +1,42 @@
-# name: Deploy .NET API to Remote VM
-name: Deploy to VM and Database Migration
+name: Deploy ASP.NET Core Backend
 
 on:
   push:
     branches:
-      - main
+      - main # Change to the branch you want to deploy from
 
 jobs:
-  deploy:
+  deploy-backend:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up .NET SDK
+      - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "8.x"
+          dotnet-version: "8.x" # Use the appropriate .NET version
 
-      - name: Restore dependencies
-        run: dotnet restore
+      - name: Build Backend
+        working-directory: ./AspNetCoreProject # Change to your ASP.NET Core project directory
+        run: dotnet publish -c Release -o ./publish
 
-      - name: Build the project
-        run: dotnet build --configuration Release
-
-      - name: Publish the project
-        run: dotnet publish --configuration Release --output ./publish
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+      - name: Deploy Backend to Azure VM
+        uses: appleboy/scp-action@v0.1.4
         with:
-          name: dotnet-api
-          path: ./publish
+          host: ${{ secrets.VM_HOST_IP }}
+          username: ${{ secrets.HOST_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY2 }}
+          source: "./AspNetCoreProject/publish/*"
+          target: ${{ secrets.VM_BACKEND_DIR }}
 
-      - name: Remove old files from the remote VM
-        env:
-          SSH_PRIVATE_KEY2: ${{ secrets.SSH_PRIVATE_KEY2 }}
-        run: |
-          docker run --rm -v $PWD:/work -w /work ubuntu:latest bash -c "
-            apt-get update && apt-get install -y openssh-client && \
-            # Create the key.pem file from the environment variable
-            echo \"$SSH_PRIVATE_KEY2\" | tr -d '\r' > key.pem && \
-            chmod 400 key.pem && \
-            echo 'Contents of ./publish directory:' && ls -al ./publish && \
-            # Remove old files from the remote VM
-            ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 'rm -rf /Backend/publish/* && \
-            # [ ! -d /Backend/newDir ] && mkdir /Backend/newDir && \
-            echo \"Old files deleted from /Backend/publish\"'
-          "
-
-      - name: Copy new publish folder to the remote VM
-        env:
-          SSH_PRIVATE_KEY2: ${{ secrets.SSH_PRIVATE_KEY2 }}
-        run: |
-          docker run --rm -v $PWD:/work -w /work ubuntu:latest bash -c "
-            apt-get update && apt-get install -y openssh-client && \
-            # Create the key.pem file from the environment variable
-            echo \"$SSH_PRIVATE_KEY2\" | tr -d '\r' > key.pem && \
-            chmod 400 key.pem && \
-            # Copy the new publish folder to the remote VM
-            scp -i key.pem -o StrictHostKeyChecking=no -r ./publish/* azureuser@40.87.131.145:Backend/
-          "
-
-      - name: Start the .NET application on the remote server
-        env:
-          SSH_PRIVATE_KEY2: ${{ secrets.SSH_PRIVATE_KEY2 }}
-        run: |
-          docker run --rm -v $PWD:/work -w /work ubuntu:latest bash -c "
-            apt-get update && apt-get install -y openssh-client && \
-            # Create the key.pem file from the environment variable
-            echo \"$SSH_PRIVATE_KEY2\" | tr -d '\r' > key.pem && \
-            chmod 400 key.pem && \
-            # Start the .NET application on the remote server
-            ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 'cd /Backend/publish/ && dotnet \"Whoknows backend.dll\" & echo \"Application started successfully\"'
-          "
+      - name: Restart Backend Service
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.VM_HOST_IP }}
+          username: ${{ secrets.HOST_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY2 }}
+          script: |
+            # Commands to restart your backend service
+            sudo systemctl restart backend.service
