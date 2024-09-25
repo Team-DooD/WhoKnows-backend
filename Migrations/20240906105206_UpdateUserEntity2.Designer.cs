@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WhoKnows_backend.Entities;
 
@@ -10,9 +11,11 @@ using WhoKnows_backend.Entities;
 namespace WhoKnows_backend.Migrations
 {
     [DbContext(typeof(WhoknowsContext))]
-    partial class WhoknowsContextModelSnapshot : ModelSnapshot
+    [Migration("20240906105206_UpdateUserEntity2")]
+    partial class UpdateUserEntity2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,11 +85,10 @@ namespace WhoKnows_backend.Migrations
                         .HasMaxLength(45)
                         .HasColumnType("varchar(45)")
                         .HasColumnName("password");
-                        
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("longtext")
-
                         .HasColumnName("username");
 
                     b.HasKey("Id")

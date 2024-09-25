@@ -5,11 +5,11 @@ namespace WhoKnows_backend.Entities;
 
 public partial class User
 {
-    public int Username { get; set; }
+    public string Username { get; set; } = string.Empty;
 
     public string? Password { get; set; }
 
-    public string Id { get; set; } = null!;
+    public int Id { get; set; }
 
     public string Email { get; set; } = null!;
 }
