@@ -21,17 +21,8 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Install EF Core tools
-        run: dotnet tool install --global dotnet-ef
-
-      - name: Add EF tools to PATH
-        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
-
       - name: Build the project (Frontend & Backend)
         run: dotnet build --configuration Release
-
-      - name: Run migrations
-        run: dotnet ef database update --configuration Release
 
       - name: Publish the web API backend
         run: dotnet publish --configuration Release --output ./publish
