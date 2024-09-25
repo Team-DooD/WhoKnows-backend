@@ -73,11 +73,9 @@ jobs:
           docker run --rm -v $PWD:/work -w /work ubuntu:latest bash -c "
             apt-get update && apt-get install -y openssh-client && \
             echo \"$SSH_PRIVATE_KEY\" > key.pem && chmod 600 key.pem && \
-            ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 << 'EOF'
-              cd Backend/publish/
-              dotnet 'WhoKnows backend.dll' &
-              echo 'Application started successfully'
-            EOF
+            
+            # Start the application on the remote VM without using heredoc
+            ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 'cd Backend/publish/ && dotnet \"WhoKnows backend.dll\" & echo \"Application started successfully\"'
           "
 
       # Cleanup SSH key file after use
