@@ -67,16 +67,6 @@ if (string.IsNullOrEmpty(jwtSecretKey))
 var key = Encoding.ASCII.GetBytes(jwtSecretKey);
 
 
-
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.ListenAnyIP(8087); // HTTP port
-    serverOptions.ListenAnyIP(8088, listenOptions =>
-    {
-        listenOptions.UseHttps(); // HTTPS port
-    });
-});
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
