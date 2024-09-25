@@ -25,7 +25,7 @@ namespace WhoKnows_backend.Entities
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseMySql(
-                    Configuration.GetConnectionString("DefaultConnection"), 
+                    Configuration.GetConnectionString("ConnectionStrings:DefaultConnection"), 
                     new MySqlServerVersion(new Version(8, 0, 32)) 
                 );
             }
