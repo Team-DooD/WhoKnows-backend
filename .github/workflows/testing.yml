@@ -40,22 +40,21 @@ jobs:
       - name: Remove old files on remote VM (inside Docker container)
         env:
           SSH_PRIVATE_KEY: ${{ secrets.PRIVATEKEY }}
-     run: |
-      docker run --rm -v $PWD:/work -w /work ubuntu:latest bash -c "
-        apt-get update && apt-get install -y openssh-client openssl && \
-        
-        # Ensure proper handling of the SSH private key
-        echo \"$SSH_PRIVATE_KEY\" | sed 's/\\r$//' > key.pem && \
-        chmod 600 key.pem && \
-        
-        # Debugging: Show the contents of key.pem to check formatting
-        echo 'SSH key contents:' && cat key.pem && \
+        run: |
+          docker run --rm -v $PWD:/work -w /work ubuntu:latest bash -c "
+            apt-get update && apt-get install -y openssh-client openssl && \
+            
+            # Ensure proper handling of the SSH private key
+            echo \"$SSH_PRIVATE_KEY\" | sed 's/\\r$//' > key.pem && \
+            chmod 600 key.pem && \
+            
+            # Debugging: Show the contents of key.pem to check formatting
+            echo 'SSH key contents:' && cat key.pem && \
 
-        # Run the SSH command to remove old files without using heredoc
-        echo 'Removing old files from remote VM...' && \
-        ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 'rm -rf /Backend/publish/* && echo \"Old files deleted from /Backend/publish/\"'
-      "
-
+            # Run the SSH command to remove old files without using heredoc
+            echo 'Removing old files from remote VM...' && \
+            ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 'rm -rf /Backend/publish/* && echo \"Old files deleted from /Backend/publish/\"'
+          "
 
       - name: Copy new files to remote VM using SCP (inside Docker container)
         env:
