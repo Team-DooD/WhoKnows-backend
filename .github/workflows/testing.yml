@@ -56,6 +56,27 @@ jobs:
             ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 'rm -rf /Backend/publish/* && echo \"Old files deleted from /Backend/publish/\"'
           "
 
+      - name: Create appsettings.json file
+        run: |
+          cat <<EOF > ./publish/appsettings.json
+          {
+            "Logging": {
+              "LogLevel": {
+                "Default": "Information",
+                "Microsoft.AspNetCore": "Warning"
+              }
+            },
+            "ConnectionStrings": {
+              "DefaultConnection": "${{ secrets.DB_CONNECTION_STRING }}"
+            },
+            "Jwt": {
+              "SecretKey": "${{ secrets.JWT_SECRET_KEY }}",
+              "Issuer": "${{ secrets.JWT_ISSUER }}",
+              "Audience": "${{ secrets.JWT_AUDIENCE }}"
+            }
+          }
+          EOF
+
       - name: Copy new files to remote VM using SCP (inside Docker container)
         env:
           SSH_PRIVATE_KEY: ${{ secrets.PRIVATEKEY }}

@@ -5,3 +5,5 @@ appsettings.json
 /obj
 /.vs
 /publish
+appsettings.Production.json
+
