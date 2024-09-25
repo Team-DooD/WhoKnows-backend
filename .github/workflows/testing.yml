@@ -27,6 +27,9 @@ jobs:
       - name: Build the project (Frontend & Backend)
         run: dotnet build --configuration Release
 
+      - name: Create a new migration
+        run: dotnet ef migrations add NewMigration --configuration Release
+
       - name: Run migrations
         run: dotnet ef database update --configuration Release
 
