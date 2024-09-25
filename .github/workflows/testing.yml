@@ -24,6 +24,9 @@ jobs:
       - name: Build the project (Frontend & Backend)
         run: dotnet build --configuration Release
 
+      - name: Run migrations
+        run: dotnet ef database update --configuration Release
+
       - name: Publish the web API backend
         run: dotnet publish --configuration Release --output ./publish
 
@@ -64,21 +67,6 @@ jobs:
             apt-get update && apt-get install -y openssh-client && \
             echo \"$SSH_PRIVATE_KEY\" > key.pem && chmod 600 key.pem && \
             scp -i key.pem -o StrictHostKeyChecking=no -r ./publish azureuser@40.87.131.145:Backend/
-          "
-
-
-               # EF Core Migrations step
-      - name: Apply EF Core migrations to MySQL database
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.PRIVATEKEY }}
-          MYSQL_CONNECTION_STRING: ${{ secrets.MYSQL_CONNECTION_STRING }}
-        run: |
-          docker run --rm -v $PWD:/work -w /work ubuntu:latest bash -c "
-            apt-get update && apt-get install -y openssh-client && \
-            echo \"$SSH_PRIVATE_KEY\" > key.pem && chmod 600 key.pem && \
-            
-            # Apply the EF Core migrations on the remote MySQL database
-            ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 'cd Backend/publish/ && dotnet ef database update --connection \"$MYSQL_CONNECTION_STRING\" && echo \"EF Core migrations applied\"'
           "
 
       - name: Start the application on remote VM (inside Docker container)
