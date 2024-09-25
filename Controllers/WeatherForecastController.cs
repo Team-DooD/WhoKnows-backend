@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WhoKnows_backend.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
@@ -18,7 +18,7 @@ namespace WhoKnows_backend.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
+        [HttpGet("Weather")]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
