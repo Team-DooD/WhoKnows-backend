@@ -112,6 +112,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger(); // Ensure Swagger is enabled in development
     app.UseSwaggerUI();
 }
+else {
+
+    app.UseSwagger(); // Ensure Swagger is enabled in development
+    app.UseSwaggerUI();
+}
 
 app.UseHttpsRedirection();
 
