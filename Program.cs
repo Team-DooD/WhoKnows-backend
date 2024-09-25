@@ -50,6 +50,7 @@ builder.Services.AddDbContext<WhoknowsContext>(options =>
         new MySqlServerVersion(new Version(8, 0, 36)) // Replace with your MySQL version
     );
 });
+Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -64,7 +65,7 @@ if (string.IsNullOrEmpty(jwtSecretKey))
     throw new ArgumentNullException(nameof(jwtSecretKey), "Jwt:SecretKey cannot be null or empty.");
 }
 var key = Encoding.ASCII.GetBytes(jwtSecretKey);
-Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection"));
+
 
 
 builder.Services.AddAuthentication(options =>
