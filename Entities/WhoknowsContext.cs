@@ -21,7 +21,7 @@ namespace WhoKnows_backend.Entities
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseMySql(
-                    "server=localhost;port=3306;user=root;password=MySQL1234;database=whoknows",
+                    "server=40.87.131.145;port=3307;user=root;password=MySQL1234;database=whoKnowsDB;Pooling=true;",
                     new MySqlServerVersion(new Version(8, 0, 32)) // Replace with your MySQL version
                 );
             }
