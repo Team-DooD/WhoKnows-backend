@@ -70,8 +70,8 @@ var key = Encoding.ASCII.GetBytes(jwtSecretKey);
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.ListenAnyIP(8080); // HTTP port
-    serverOptions.ListenAnyIP(8081, listenOptions =>
+    serverOptions.ListenAnyIP(8087); // HTTP port
+    serverOptions.ListenAnyIP(8088, listenOptions =>
     {
         listenOptions.UseHttps(); // HTTPS port
     });
