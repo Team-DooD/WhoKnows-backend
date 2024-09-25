@@ -57,8 +57,15 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 // Add JWT Authentication
-var jwtSecretKey = builder.Configuration.GetValue<string>("Jwt:SecretKey"); // Ensure this is set in your appsettings.json
+var jwtSecretKey = builder.Configuration.GetValue<string>("Jwt:SecretKey");
+if (string.IsNullOrEmpty(jwtSecretKey))
+{
+    Console.WriteLine("Jwt:SecretKey is not set.");
+    throw new ArgumentNullException(nameof(jwtSecretKey), "Jwt:SecretKey cannot be null or empty.");
+}
 var key = Encoding.ASCII.GetBytes(jwtSecretKey);
+Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection"));
+
 
 builder.Services.AddAuthentication(options =>
 {
