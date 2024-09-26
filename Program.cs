@@ -108,6 +108,18 @@ builder.Services.AddDbContext<WhoknowsContext>(options =>
     );
 });
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -122,6 +134,8 @@ else {
     app.UseSwaggerUI();
 }
 
+
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
 app.UseSession(); // Ensure session middleware is used
