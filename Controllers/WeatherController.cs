@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace WhoKnows_backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class WeatherController : ControllerBase
     {
         private readonly HttpClient _httpClient;

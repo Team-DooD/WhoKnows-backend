@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace WhoKnows_backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class LoginController : ControllerBase
     {
         private readonly WhoknowsContext _context;
