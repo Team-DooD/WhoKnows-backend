@@ -7,6 +7,10 @@ using WhoKnows_backend.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Register HttpClient
+builder.Services.AddHttpClient();
+
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
