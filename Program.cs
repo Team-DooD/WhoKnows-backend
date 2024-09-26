@@ -50,6 +50,7 @@ builder.Services.AddDbContext<WhoknowsContext>(options =>
         new MySqlServerVersion(new Version(8, 0, 36)) // Replace with your MySQL version
     );
 });
+Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -57,8 +58,14 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 // Add JWT Authentication
-var jwtSecretKey = builder.Configuration.GetValue<string>("Jwt:SecretKey"); // Ensure this is set in your appsettings.json
+var jwtSecretKey = builder.Configuration.GetValue<string>("Jwt:SecretKey");
+if (string.IsNullOrEmpty(jwtSecretKey))
+{
+    Console.WriteLine("Jwt:SecretKey is not set.");
+    throw new ArgumentNullException(nameof(jwtSecretKey), "Jwt:SecretKey cannot be null or empty.");
+}
 var key = Encoding.ASCII.GetBytes(jwtSecretKey);
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -102,6 +109,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger(); // Ensure Swagger is enabled in development
+    app.UseSwaggerUI();
+}
+else {
+
     app.UseSwagger(); // Ensure Swagger is enabled in development
     app.UseSwaggerUI();
 }

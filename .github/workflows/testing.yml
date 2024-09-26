@@ -1,0 +1,115 @@
+name: Deploy dotnet API Gateway Backend to Remote VM
+
+on:
+  push:
+    branches:
+      - feature/createYml
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "8.x"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the project (Frontend & Backend)
+        run: dotnet build --configuration Release
+
+      - name: Publish the web API backend
+        run: dotnet publish --configuration Release --output ./publish
+
+      # Check if publish folder exists and list its contents (for debugging)
+      - name: List published files
+        run: ls -al ./publish
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dotnet-backend
+          path: ./publish
+
+      - name: Remove old files on remote VM (inside Docker container)
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PRIVATEKEY }}
+        run: |
+          docker run --rm -v $PWD:/work -w /work ubuntu:latest bash -c "
+            apt-get update && apt-get install -y openssh-client openssl && \
+            
+            # Ensure proper handling of the SSH private key
+            echo \"$SSH_PRIVATE_KEY\" | sed 's/\\r$//' > key.pem && \
+            chmod 600 key.pem && \
+            
+            # Debugging: Show the contents of key.pem to check formatting
+            echo 'SSH key contents:' && cat key.pem && \
+
+            # Run the SSH command to remove old files without using heredoc
+            echo 'Removing old files from remote VM...' && \
+            ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 'rm -rf /Backend/publish/* && echo \"Old files deleted from /Backend/publish/\"'
+          "
+
+      - name: Create appsettings.json file
+        run: |
+          cat <<EOF > ./publish/appsettings.json
+          {
+             "Kestrel": {
+            "Endpoints": {
+              "Http": {
+                "Url": "http://localhost:8087"
+              },
+              "Https": {
+                "Url": "https://localhost:8088"
+              }
+            }
+          },
+            "Logging": {
+              "LogLevel": {
+                "Default": "Information",
+                "Microsoft.AspNetCore": "Warning"
+              }
+            },
+            "ConnectionStrings": {
+              "DefaultConnection": "${{ secrets.DB_CONNECTION_STRING }}"
+            },
+            "Jwt": {
+              "SecretKey": "${{ secrets.JWT_SECRET_KEY }}",
+              "Issuer": "${{ secrets.JWT_ISSUER }}",
+              "Audience": "${{ secrets.JWT_AUDIENCE }}"
+            }
+          }
+          EOF
+
+      - name: Copy new files to remote VM using SCP (inside Docker container)
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PRIVATEKEY }}
+        run: |
+          docker run --rm -v $PWD:/work -w /work ubuntu:latest bash -c "
+            apt-get update && apt-get install -y openssh-client && \
+            echo \"$SSH_PRIVATE_KEY\" > key.pem && chmod 600 key.pem && \
+            scp -i key.pem -o StrictHostKeyChecking=no -r ./publish azureuser@40.87.131.145:Backend/
+          "
+
+      - name: Start the application on remote VM (inside Docker container)
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PRIVATEKEY }}
+        run: |
+          docker run --rm -v $PWD:/work -w /work ubuntu:latest bash -c "
+            apt-get update && apt-get install -y openssh-client && \
+            echo \"$SSH_PRIVATE_KEY\" > key.pem && chmod 600 key.pem && \
+            
+            # Start the application on the remote VM without using heredoc
+            ssh -i key.pem -o StrictHostKeyChecking=no azureuser@40.87.131.145 "cd Backend/publish/ && dotnet 'WhoKnows\ backend.dll' --urls 'http://*:8080;https://*:8081' & echo 'Application started successfully'"
+
+          "
+
+      # Cleanup SSH key file after use
+      - name: Cleanup
+        run: rm -f key.pem
