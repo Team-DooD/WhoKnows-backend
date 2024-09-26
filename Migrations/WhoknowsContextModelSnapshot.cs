@@ -82,10 +82,11 @@ namespace WhoKnows_backend.Migrations
                         .HasMaxLength(45)
                         .HasColumnType("varchar(45)")
                         .HasColumnName("password");
-
+                        
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("longtext")
+
                         .HasColumnName("username");
 
                     b.HasKey("Id")

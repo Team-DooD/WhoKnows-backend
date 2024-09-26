@@ -4,16 +4,12 @@ using WhoKnows_backend.Entities;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.Data;
 using WhoKnows_backend.DTO;
-using System.Linq;
-using System.Threading.Tasks;
-using WhoKnows_backend.Entities;
-using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WhoKnows_backend.Controllers
 {

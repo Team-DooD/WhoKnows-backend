@@ -88,6 +88,15 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// Configure DbContext with Pomelo.EntityFrameworkCore.MySql
+builder.Services.AddDbContext<WhoknowsContext>(options =>
+{
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new MySqlServerVersion(new Version(8, 0, 32)) // Replace with your MySQL version
+    );
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

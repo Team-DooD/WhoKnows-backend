@@ -27,10 +27,6 @@ namespace WhoKnows_backend.Entities
             }
         }
 
-
-      
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Page>(entity =>
