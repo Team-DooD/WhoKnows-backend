@@ -83,7 +83,7 @@ jobs:
               "SecretKey": "${{ secrets.JWT_SECRET_KEY }}",
               "Issuer": "${{ secrets.JWT_ISSUER }}",
               "Audience": "${{ secrets.JWT_AUDIENCE }}"
-            }
+            },
               "apiKey": {
                 "apiKey": "${{ secrets.API_KEY }}"
                 }
