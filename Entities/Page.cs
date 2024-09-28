@@ -7,7 +7,7 @@ public partial class Page
 {
     public string Title { get; set; } = null!;
 
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
     public string? Language { get; set; }
 

@@ -17,8 +17,8 @@ namespace WhoKnows_backend.Entities
             Configuration = configuration;
         }
 
-        public virtual DbSet<Page> Pages { get; set; } = null!;
-        public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<Page> Pages { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -42,23 +42,32 @@ namespace WhoKnows_backend.Entities
                 // Set up a unique index on the Url property
                 entity.HasIndex(e => e.Url, "url_UNIQUE").IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd(); // Ensure Id is auto-generated if it's an identity column
+
                 entity.Property(e => e.Content)
-                    .HasMaxLength(255)
-                    .HasColumnName("content");
+                    .HasMaxLength(65535) // Adjusted max length for content
+                    .HasColumnName("content")
+                    .IsRequired(); // Make this column required
+
                 entity.Property(e => e.Language)
                     .HasMaxLength(45)
                     .HasDefaultValueSql("'en'")
                     .HasColumnName("language");
+
                 entity.Property(e => e.Title)
                     .HasMaxLength(255)
-                    .HasColumnName("title");
+                    .HasColumnName("title")
+                    .IsRequired(); // Make this column required
+
                 // Specify the max length for Url to allow unique indexing
                 entity.Property(e => e.Url)
                     .HasMaxLength(255) // Specify max length here
                     .HasColumnName("url")
                     .IsRequired(); // Make sure this column is required
             });
+
 
             modelBuilder.Entity<User>(entity =>
             {

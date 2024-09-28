@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using WhoKnows_backend.Entities;
+using WhoKnows_backend.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
