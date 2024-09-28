@@ -4,13 +4,17 @@ namespace WhoKnows_backend.Entities
 {
     public partial class WhoknowsContext : DbContext
     {
-        public WhoknowsContext()
+
+        private readonly IConfiguration Configuration;
+        public WhoknowsContext(IConfiguration configuration)
         {
+            Configuration = configuration;
         }
 
-        public WhoknowsContext(DbContextOptions<WhoknowsContext> options)
+        public WhoknowsContext(DbContextOptions<WhoknowsContext> options, IConfiguration configuration)
             : base(options)
         {
+            Configuration = configuration;
         }
 
         public virtual DbSet<Page> Pages { get; set; } = null!;
@@ -21,15 +25,11 @@ namespace WhoKnows_backend.Entities
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseMySql(
-                    "server=localhost;port=3306;user=root;password=MySQL1234;database=whoknows",
-                    new MySqlServerVersion(new Version(8, 0, 32)) // Replace with your MySQL version
+                    Configuration.GetConnectionString("ConnectionStrings:DefaultConnection"), 
+                    new MySqlServerVersion(new Version(8, 0, 32)) 
                 );
             }
         }
-
-
-      
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,6 +39,7 @@ namespace WhoKnows_backend.Entities
 
                 entity.ToTable("pages");
 
+                // Set up a unique index on the Url property
                 entity.HasIndex(e => e.Url, "url_UNIQUE").IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -52,7 +53,11 @@ namespace WhoKnows_backend.Entities
                 entity.Property(e => e.Title)
                     .HasMaxLength(255)
                     .HasColumnName("title");
-                entity.Property(e => e.Url).HasColumnName("url");
+                // Specify the max length for Url to allow unique indexing
+                entity.Property(e => e.Url)
+                    .HasMaxLength(255) // Specify max length here
+                    .HasColumnName("url")
+                    .IsRequired(); // Make sure this column is required
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -64,13 +69,14 @@ namespace WhoKnows_backend.Entities
                 entity.HasIndex(e => e.Email, "email_UNIQUE").IsUnique();
 
                 entity.Property(e => e.Id)
-                    .HasMaxLength(45)
                     .HasColumnName("id");
-                entity.Property(e => e.Email).HasColumnName("email");
+                entity.Property(e => e.Email)
+                    .HasColumnName("email");
                 entity.Property(e => e.Password)
                     .HasMaxLength(45)
                     .HasColumnName("password");
-                entity.Property(e => e.Username).HasColumnName("username");
+                entity.Property(e => e.Username)
+                    .HasColumnName("username");
             });
 
             OnModelCreatingPartial(modelBuilder);

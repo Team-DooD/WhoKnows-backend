@@ -7,6 +7,10 @@ using WhoKnows_backend.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Register HttpClient
+builder.Services.AddHttpClient();
+
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -50,6 +54,7 @@ builder.Services.AddDbContext<WhoknowsContext>(options =>
         new MySqlServerVersion(new Version(8, 0, 36)) // Replace with your MySQL version
     );
 });
+Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -57,8 +62,14 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 // Add JWT Authentication
-var jwtSecretKey = builder.Configuration.GetValue<string>("Jwt:SecretKey"); // Ensure this is set in your appsettings.json
+var jwtSecretKey = builder.Configuration.GetValue<string>("Jwt:SecretKey");
+if (string.IsNullOrEmpty(jwtSecretKey))
+{
+    Console.WriteLine("Jwt:SecretKey is not set.");
+    throw new ArgumentNullException(nameof(jwtSecretKey), "Jwt:SecretKey cannot be null or empty.");
+}
 var key = Encoding.ASCII.GetBytes(jwtSecretKey);
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -88,6 +99,27 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// Configure DbContext with Pomelo.EntityFrameworkCore.MySql
+builder.Services.AddDbContext<WhoknowsContext>(options =>
+{
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new MySqlServerVersion(new Version(8, 0, 32)) // Replace with your MySQL version
+    );
+});
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -96,7 +128,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger(); // Ensure Swagger is enabled in development
     app.UseSwaggerUI();
 }
+else {
 
+    app.UseSwagger(); // Ensure Swagger is enabled in development
+    app.UseSwaggerUI();
+}
+
+
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
 app.UseSession(); // Ensure session middleware is used

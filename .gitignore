@@ -1,6 +1,9 @@
 
-appsettings.json
 appsettings.Development.json
+appsettings.json
 /bin
 /obj
 /.vs
+/publish
+appsettings.Production.json
+

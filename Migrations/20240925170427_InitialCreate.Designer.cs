@@ -11,8 +11,8 @@ using WhoKnows_backend.Entities;
 namespace WhoKnows_backend.Migrations
 {
     [DbContext(typeof(WhoknowsContext))]
-    [Migration("20240906105206_UpdateUserEntity2")]
-    partial class UpdateUserEntity2
+    [Migration("20240925170427_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,6 +54,7 @@ namespace WhoKnows_backend.Migrations
 
                     b.Property<string>("Url")
                         .IsRequired()
+                        .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("url");
 
@@ -70,7 +71,6 @@ namespace WhoKnows_backend.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(45)
                         .HasColumnType("int")
                         .HasColumnName("id");
 

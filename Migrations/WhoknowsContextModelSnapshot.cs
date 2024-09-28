@@ -51,6 +51,7 @@ namespace WhoKnows_backend.Migrations
 
                     b.Property<string>("Url")
                         .IsRequired()
+                        .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("url");
 
@@ -67,7 +68,6 @@ namespace WhoKnows_backend.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(45)
                         .HasColumnType("int")
                         .HasColumnName("id");
 
