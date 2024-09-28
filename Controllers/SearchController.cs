@@ -17,8 +17,7 @@ namespace WhoKnows_backend.Controllers
             _context = context;
         }
 
-        // HTML endpoint for search
-        [HttpGet("Html")]
+        [HttpGet("")]
         public async Task<IActionResult> Search([FromQuery] string q = null, [FromQuery] string language = "en")
         {
             var searchResults = string.IsNullOrEmpty(q)
@@ -30,19 +29,7 @@ namespace WhoKnows_backend.Controllers
             return Ok(searchResults); 
         }
 
-      [HttpGet("")]
-        public async Task<IActionResult> ApiSearch([FromQuery] string q = null, [FromQuery] string language = "en")
-        {
-
-            // Query the database for pages matching the search term and limit results to 10
-            var searchResults = await _context.Pages
-             .Where(p => p.Language == language && p.Content.Contains(q) && p.Id != null)
-             .Take(10)
-             .ToListAsync();
-
-
-            return Ok(new { searchResults });
-        }
+  
     }
 }
 
