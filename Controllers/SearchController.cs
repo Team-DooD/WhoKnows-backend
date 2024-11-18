@@ -17,7 +17,7 @@ namespace WhoKnows_backend.Controllers
             _context = context;
         }
 
-        // HTML endpoint for search
+        // HTML endpoint for search.
         [HttpGet("Html")]
         public async Task<IActionResult> Search([FromQuery] string q = null, [FromQuery] string language = "en")
         {
