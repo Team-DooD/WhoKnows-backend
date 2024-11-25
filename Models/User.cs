@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace WhoKnows_backend.Models;
 
 public partial class User
 {
+    [Key]
     public int Id { get; set; }
 
     public string Username { get; set; } = null!;

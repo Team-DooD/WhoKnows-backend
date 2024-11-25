@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WhoKnows_backend.Models;
 
@@ -11,9 +12,11 @@ using WhoKnows_backend.Models;
 namespace WhoKnows_backend.Migrations
 {
     [DbContext(typeof(WhoknowsContext))]
-    partial class WhoknowsContextModelSnapshot : ModelSnapshot
+    [Migration("20241125193043_changes2")]
+    partial class changes2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,11 +38,6 @@ namespace WhoKnows_backend.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("content");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("createdBy");
 
                     b.Property<string>("Language")
                         .IsRequired()
@@ -65,7 +63,8 @@ namespace WhoKnows_backend.Migrations
                     b.HasKey("Id")
                         .HasName("PRIMARY");
 
-                    b.HasIndex(new[] { "Title" }, "title");
+                    b.HasIndex(new[] { "Title" }, "title")
+                        .IsUnique();
 
                     b.HasIndex(new[] { "Url" }, "url_idx")
                         .IsUnique();

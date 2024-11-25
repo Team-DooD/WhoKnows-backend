@@ -38,28 +38,42 @@ public partial class WhoknowsContext : DbContext
     {
         modelBuilder.Entity<Page>(entity =>
         {
-            entity.HasKey(e => e.Title).HasName("PRIMARY");
+            // Set Id as the primary key and ensure it's auto-incremented
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            // Drop the unique constraint on Title if it was set previously
+            entity.HasIndex(e => e.Title, "title").IsUnique(false);
 
             entity.ToTable("pages");
 
-            entity.HasIndex(e => e.Title, "title").IsUnique();
-
+            // Define unique index for the Url column (if needed)
             entity.HasIndex(e => e.Url, "url_idx").IsUnique();
 
+            // Map columns to table fields
             entity.Property(e => e.Title).HasColumnName("title");
+            entity.Property(e => e.CreatedBy).HasColumnName("createdBy");
+
             entity.Property(e => e.Content)
                 .HasColumnType("text")
                 .HasColumnName("content");
-            entity.Property(e => e.Id).HasColumnName("id");
+
+            // Define Id as the primary key and set it to auto-increment (ValueGeneratedOnAdd)
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .ValueGeneratedOnAdd();  // Ensure auto-increment for new records
+
             entity.Property(e => e.Language)
-                .HasDefaultValueSql("'en'")
+                .HasDefaultValueSql("'en'") // Set default value for Language if not provided
                 .HasColumnType("enum('en','da')")
                 .HasColumnName("language");
+
             entity.Property(e => e.LastUpdated)
                 .HasColumnType("timestamp")
                 .HasColumnName("last_updated");
+
             entity.Property(e => e.Url).HasColumnName("url");
         });
+
 
         modelBuilder.Entity<User>(entity =>
         {
