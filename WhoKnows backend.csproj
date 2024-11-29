@@ -41,6 +41,7 @@
 
   <ItemGroup>
     <Folder Include="Github\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

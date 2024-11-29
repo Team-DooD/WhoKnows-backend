@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WhoKnows_backend.Models;
 
@@ -11,9 +12,11 @@ using WhoKnows_backend.Models;
 namespace WhoKnows_backend.Migrations
 {
     [DbContext(typeof(WhoknowsContext))]
-    partial class WhoknowsContextModelSnapshot : ModelSnapshot
+    [Migration("20241125193809_changes4")]
+    partial class changes4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,8 +41,7 @@ namespace WhoKnows_backend.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("createdBy");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Language")
                         .IsRequired()
