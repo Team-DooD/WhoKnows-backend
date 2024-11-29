@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Prometheus;
 using System.Text;
 using WhoKnows_backend.Models;
 
@@ -137,6 +138,11 @@ else {
 
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
+
+ // Use prometheus middleware
+app.UseRouting();
+app.UseHttpMetrics(); // Collect metrics for HTTP requests
+app.MapMetrics(); // Expose the /metrics endpoint
 
 app.UseSession(); // Ensure session middleware is used
 

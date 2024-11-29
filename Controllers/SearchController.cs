@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Security;
+using Prometheus;
 using System.Linq;
 using System.Threading.Tasks;
 using WhoKnows_backend.Models;
+
 
 namespace WhoKnows_backend.Controllers
 {
@@ -12,6 +15,11 @@ namespace WhoKnows_backend.Controllers
     {
         private readonly WhoknowsContext _context;
 
+        // Set up the counter for search-api requests 
+        private static readonly Counter searchRequestCounter = Metrics.CreateCounter("api_requests_total", "Total number of API requests made.");
+        // Set up the trackeing of time for each seacrch request
+        private static readonly Histogram searchDurationHistogram = Metrics.CreateHistogram("search_duration_seconds", "Histogram of search durations in seconds");
+
         public SearchController(WhoknowsContext context)
         {
             _context = context;
@@ -20,12 +28,21 @@ namespace WhoKnows_backend.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Search([FromQuery] string q = null, [FromQuery] string language = "en")
         {
+
+            // Starts the timer for meassuring the search duration
+            var timer = searchDurationHistogram.NewTimer();
+
+            // Increment the timer for search request
+            searchRequestCounter.Inc();
+
+            // The search logic itself
             var searchResults = string.IsNullOrEmpty(q)
                 ? new List<Page>()
                 : await _context.Pages
                     .Where(p => p.Language == language && p.Content.Contains(q))
                     .ToListAsync();
 
+            // Retrun the search result
             return Ok(searchResults); 
         }
 
