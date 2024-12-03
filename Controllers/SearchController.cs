@@ -44,7 +44,20 @@ namespace WhoKnows_backend.Controllers
             if (!searchResults.Any())
             {
                 var scarpeResult = PythonScriptExecutor.ExecutePythonScript("scripts/fetchData.py", q);
-                return Ok(scarpeResult);
+                var scrapedPages = System.Text.Json.JsonSerializer.Deserialize<List<Page>>(scarpeResult);
+
+
+                if (scrapedPages[0].Content.Length > 240)
+                {
+                    _context.Pages.AddRange(scrapedPages);
+                    await _context.SaveChangesAsync(); // Save changes to the database
+
+                    return Ok(scrapedPages);
+                }
+                else
+                {
+                    return BadRequest("No valid data scraped.");
+                }
             }
             else
             {

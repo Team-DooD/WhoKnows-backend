@@ -17,7 +17,7 @@ def fetch_combined_paragraphs(keyword):
             "Language": "en",
             "LastUpdated": datetime.utcnow().isoformat(),
             "Content": f"Error fetching the page: {e}",
-            "Id": -1
+    "Id": 0
         }])
     
     soup = BeautifulSoup(response.text, "html.parser")
@@ -32,7 +32,8 @@ def fetch_combined_paragraphs(keyword):
         "Language": "en",
         "LastUpdated": datetime.utcnow().isoformat(),
         "Content": combined_text,
-        "Id": -1
+    "Id": 0
+
     }]
     
     return json.dumps(result)
