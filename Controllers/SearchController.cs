@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using WhoKnows_backend.Models;
+using WhoKnowsBackend.Scripts;
 
 namespace WhoKnows_backend.Controllers
 {
@@ -40,8 +41,15 @@ namespace WhoKnows_backend.Controllers
                   .Where(p => p.Language == language && p.Content.Contains(q))
                   .ToListAsync();
 
-            return Ok(searchResults);
+            if (!searchResults.Any())
+            {
+                var scarpeResult = PythonScriptExecutor.ExecutePythonScript("scripts/fetchData.py", q);
+                return Ok(scarpeResult);
+            }
+            else
+            {
+                return Ok(searchResults);
+            }
         }
     }
 }
-
