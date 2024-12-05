@@ -5,6 +5,7 @@ using Prometheus;
 using System.Linq;
 using System.Threading.Tasks;
 using WhoKnows_backend.Models;
+using WhoKnowsBackend.Scripts;
 
 
 namespace WhoKnows_backend.Controllers
@@ -37,16 +38,33 @@ namespace WhoKnows_backend.Controllers
 
             // The search logic itself
             var searchResults = string.IsNullOrEmpty(q)
-                ? new List<Page>()
-                : await _context.Pages
-                    .Where(p => p.Language == language && p.Content.Contains(q))
-                    .ToListAsync();
+              ? new List<Page>()
+              : await _context.Pages
+                  .Where(p => p.Language == language && p.Content.Contains(q))
+                  .ToListAsync();
 
-            // Retrun the search result
-            return Ok(searchResults); 
+            if (!searchResults.Any())
+            {
+                var scarpeResult = PythonScriptExecutor.ExecutePythonScript("scripts/fetchData.py", q);
+                var scrapedPages = System.Text.Json.JsonSerializer.Deserialize<List<Page>>(scarpeResult);
+
+
+                if (scrapedPages[0].Content.Length > 240)
+                {
+                    _context.Pages.AddRange(scrapedPages);
+                    await _context.SaveChangesAsync(); // Save changes to the database
+
+                    return Ok(scrapedPages);
+                }
+                else
+                {
+                    return BadRequest("No valid data scraped.");
+                }
+            }
+            else
+            {
+                return Ok(searchResults);
+            }
         }
-
-  
     }
 }
-
