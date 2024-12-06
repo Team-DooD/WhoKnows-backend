@@ -12,11 +12,15 @@ namespace WhoKnows_backend.Controllers
         public IActionResult Logout()
         {
             // Check if specific cookies exist and remove them
-            if (Request.Cookies.ContainsKey(".AspNetCore.Antiforgery.tib6llArwhY"))
+            foreach (var cookie in Request.Cookies.Keys)
             {
-                Response.Cookies.Delete(".AspNetCore.Antiforgery.tib6llArwhY");
+                // Check if the cookie name contains the antiforgery token prefix
+                if (cookie.StartsWith(".AspNetCore.Antiforgery"))
+                {
+                    // Remove the antiforgery cookie
+                    Response.Cookies.Delete(cookie);
+                }
             }
-
             // Clear session
             HttpContext.Session.Clear();
 
