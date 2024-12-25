@@ -22,7 +22,7 @@ jobs:
         run: dotnet restore ./Backend
 
       - name: Build the project (Frontend & Backend)
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release ./Backend
 
       - name: Publish the web API backend
         run: dotnet publish --configuration Release --output ./publish
