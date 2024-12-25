@@ -19,6 +19,8 @@ jobs:
           dotnet-version: "8.x"
 
       - name: Restore dependencies
+        with: 
+            path: ./Backend
         run: dotnet restore
 
       - name: Build the project (Frontend & Backend)
