@@ -25,7 +25,7 @@ jobs:
         run: dotnet build --configuration Release ./Backend
 
       - name: Publish the web API backend
-        run: dotnet publish --configuration Release --output ./publish
+        run: dotnet publish --configuration Release --output ./Backend/publish
 
       # Check if publish folder exists and list its contents (for debugging)
       - name: List published files
