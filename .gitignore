@@ -1,9 +1,5 @@
 
-appsettings.Development.json
-appsettings.json
-/bin
-/obj
+UnitTests/bin/Debug/net8.0/zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+/UnitTests/bin
 /.vs
-/publish
-appsettings.Production.json
-
+/UnitTests/obj

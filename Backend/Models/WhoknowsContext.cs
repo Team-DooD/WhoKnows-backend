@@ -13,11 +13,12 @@ public partial class WhoknowsContext : DbContext
         Configuration = configuration;
     }
 
-    public WhoknowsContext(DbContextOptions<WhoknowsContext> options, IConfiguration configuration)
+    public WhoknowsContext(DbContextOptions<WhoknowsContext> options, IConfiguration? configuration = null)
         : base(options)
     {
         Configuration = configuration;
     }
+
 
     public virtual DbSet<Page> Pages { get; set; }
 
