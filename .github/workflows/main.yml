@@ -22,14 +22,13 @@ jobs:
         run: dotnet restore ./Backend
 
       - name: Run unit tests
-        run: dotnet test ./UnitTests --configuration Release --no-build
+        run: dotnet test ./UnitTests --configuration Release
 
       - name: Build the project (Frontend & Backend)
         run: dotnet build --configuration Release ./Backend
 
       - name: Publish the web API backend
         run: dotnet publish ./Backend --configuration Release --output ./publish
-
 
       # Check if publish folder exists and list its contents (for debugging)
       - name: List published files
