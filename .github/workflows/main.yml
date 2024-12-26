@@ -34,6 +34,9 @@ jobs:
       - name: Publish the web API backend
         run: dotnet publish ./Backend --configuration Release --output ./publish
 
+      - name: Move python Scripts
+        run: mv /Backend/Scripts/ ./publish
+
       # Check if publish folder exists and list its contents (for debugging)
       - name: List published files
         run: ls -al ./publish
