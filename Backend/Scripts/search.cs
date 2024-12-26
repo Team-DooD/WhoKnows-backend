@@ -4,19 +4,14 @@ namespace WhoKnowsBackend.Scripts  // Ensure this matches the namespace in your 
 {
     public static class PythonScriptExecutor  // Changed to a static class for better organization
     {
-        public static string ExecutePythonScript(string scriptPath, string arguments)
+        public static string ExecutePythonScript(string arguments)
         {
-            if (string.IsNullOrWhiteSpace(scriptPath))
-            {
-                throw new ArgumentNullException(nameof(scriptPath), "Script path cannot be null or empty.");
-            }
-
             string pythonPath = "python"; // You can replace this with the full path if Python is not in PATH.
 
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 FileName = pythonPath,
-                Arguments = $"{scriptPath} \"{arguments}\"",
+                Arguments = $"/home/azureuser/Backend/publish/Scripts/fetchData.py, \"{arguments}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
