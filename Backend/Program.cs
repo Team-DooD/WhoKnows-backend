@@ -129,7 +129,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger(); // Ensure Swagger is enabled in development
     app.UseSwaggerUI();
 }
-else {
+else
+{
 
     app.UseSwagger(); // Ensure Swagger is enabled in development
     app.UseSwaggerUI();
@@ -139,7 +140,7 @@ else {
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
- // Use prometheus middleware
+// Use prometheus middleware
 app.UseRouting();
 app.UseHttpMetrics(); // Collect metrics for HTTP requests
 app.MapMetrics(); // Expose the /metrics endpoint

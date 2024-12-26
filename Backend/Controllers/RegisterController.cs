@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WhoKnows_backend.Models;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+using WhoKnows_backend.Models;
 
 namespace WhoKnows_backend.Controllers
 {

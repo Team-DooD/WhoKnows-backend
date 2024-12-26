@@ -52,4 +52,20 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+
+
+
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\SurfaceLaptop\Documents\GitHub\WhoKnows-backend project\Backend\.editorconfig" />
+  </ItemGroup>
+
+
+
+
+
+  <ItemGroup>
+    <None Include="C:\Users\SurfaceLaptop\Documents\GitHub\WhoKnows-backend project\Backend\.editorconfig" />
+  </ItemGroup>
+
 </Project>
