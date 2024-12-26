@@ -21,6 +21,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore ./Backend
 
+      - name: Run unit tests
+        run: dotnet test ./UnitTests --configuration Release --no-build
+
       - name: Build the project (Frontend & Backend)
         run: dotnet build --configuration Release ./Backend
 
