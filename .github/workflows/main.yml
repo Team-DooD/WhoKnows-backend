@@ -21,6 +21,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore ./Backend
 
+      - name: Lint code with dotnet format
+        run: dotnet format ./Backend --verify-no-changes
+
       - name: Run unit tests
         run: dotnet test ./UnitTests --configuration Release
 
