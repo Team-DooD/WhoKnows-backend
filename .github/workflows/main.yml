@@ -22,7 +22,7 @@ jobs:
         run: dotnet restore ./Backend
 
       - name: Lint code with dotnet format
-        run: dotnet format "WhoKnows backend.csproj" ./Backend
+        run: dotnet format "Backend/WhoKnows backend.csproj"
 
 
       - name: Run unit tests

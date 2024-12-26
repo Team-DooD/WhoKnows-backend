@@ -52,7 +52,7 @@ namespace WhoKnows_backend.Controllers
                 if (scrapedPages[0].Content.Length > 240)
                 {
                     _context.Pages.AddRange(scrapedPages);
-                    await _context.SaveChangesAsync(); 
+                    await _context.SaveChangesAsync();
 
                     var scrapeResultSearch = string.IsNullOrEmpty(q)
                       ? new List<Page>()
@@ -68,7 +68,7 @@ namespace WhoKnows_backend.Controllers
                         return Ok(scrapeResultSearch);
                     }
 
-                    }
+                }
                 else
                 {
                     return BadRequest("No valid data scraped.");
