@@ -45,7 +45,8 @@ namespace WhoKnows_backend.Controllers
 
             if (!searchResults.Any())
             {
-                var scarpeResult = PythonScriptExecutor.ExecutePythonScript(q);
+                string scarpeResult = await FetchData.FetchCombinedParagraphs(q);
+
                 var scrapedPages = System.Text.Json.JsonSerializer.Deserialize<List<Page>>(scarpeResult);
 
 
