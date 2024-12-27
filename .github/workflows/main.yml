@@ -48,6 +48,9 @@ jobs:
       - name: Move python Scripts
         run: mv ./Backend/Scripts/ ./publish
 
+      - name: Set execute permissions for Python scripts
+        run: chmod +x ./publish/Scripts/*.py
+
       - name: Remove old files on remote VM (inside Docker container)
         env:
           SSH_PRIVATE_KEY: ${{ secrets.PRIVATEKEY }}
