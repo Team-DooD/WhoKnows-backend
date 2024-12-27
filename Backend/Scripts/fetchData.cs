@@ -10,19 +10,21 @@ namespace WhoKnowsBackend.Scripts  // You can modify the namespace as needed
     // This class contains the logic for fetching and processing data from Wikipedia.
     public static class FetchData
     {
+        // Reuse the HttpClient instance for performance
+        private static readonly HttpClient client = new HttpClient();
+
         // Method to fetch combined paragraphs from a Wikipedia page
-        public static async Task<string> FetchCombinedParagraphs(string keyword)
+        public static async Task<string> FetchCombinedParagraphsAsync(string keyword)
         {
             string url = $"https://en.wikipedia.org/wiki/{Uri.EscapeDataString(keyword)}";
-            using HttpClient client = new HttpClient();
 
             try
             {
-                // Fetch the HTML content from the Wikipedia page
+                // Fetch the HTML content from the Wikipedia page asynchronously
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode(); // Ensure the HTTP request is successful
 
-                // Read the HTML content of the page
+                // Read the HTML content of the page asynchronously
                 string htmlContent = await response.Content.ReadAsStringAsync();
                 var htmlDoc = new HtmlDocument();  // Using HtmlAgilityPack's HtmlDocument
                 htmlDoc.LoadHtml(htmlContent);    // Load HTML into HtmlDocument

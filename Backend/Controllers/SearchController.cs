@@ -38,14 +38,15 @@ namespace WhoKnows_backend.Controllers
 
             // The search logic itself
             var searchResults = string.IsNullOrEmpty(q)
-              ? new List<Page>()
-              : await _context.Pages
-                  .Where(p => p.Language == language && p.Content.Contains(q))
-                  .ToListAsync();
+                ? new List<Page>()
+                : await _context.Pages
+                    .Where(p => p.Language == language && p.Content.ToLower().Contains(q.ToLower()))
+                    .ToListAsync();
+
 
             if (!searchResults.Any())
             {
-                string scarpeResult = await FetchData.FetchCombinedParagraphs(q);
+                string scarpeResult = await FetchData.FetchCombinedParagraphsAsync(q);
 
                 var scrapedPages = System.Text.Json.JsonSerializer.Deserialize<List<Page>>(scarpeResult);
 
