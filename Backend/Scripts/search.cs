@@ -6,12 +6,16 @@ namespace WhoKnowsBackend.Scripts  // Ensure this matches the namespace in your 
     {
         public static string ExecutePythonScript(string arguments)
         {
-            string pythonPath = "python"; // You can replace this with the full path if Python is not in PATH.
+
+
+
+            string pythonPath = "python3"; // You can replace this with the full path if Python is not in PATH.
 
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 FileName = pythonPath,
                 Arguments = $"/home/azureuser/Backend/publish/Scripts/fetchData.py, \"{arguments}\"",
+
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
