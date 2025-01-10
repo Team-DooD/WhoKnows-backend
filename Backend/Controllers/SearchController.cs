@@ -46,7 +46,7 @@ namespace WhoKnows_backend.Controllers
 
             if (!searchResults.Any())
             {
-                string scarpeResult = await FetchData.FetchCombinedParagraphsAsync(q);
+                string scarpeResult = await FetchData.FetchCombinedParagraphs(q);
 
                 var scrapedPages = System.Text.Json.JsonSerializer.Deserialize<List<Page>>(scarpeResult);
 
