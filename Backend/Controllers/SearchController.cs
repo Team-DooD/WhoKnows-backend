@@ -5,7 +5,7 @@ using Prometheus;
 using System.Linq;
 using System.Threading.Tasks;
 using WhoKnows_backend.Models;
-using WhoKnowsBackend.Scripts;
+using WhoKnows_backend.Scripts;
 
 
 namespace WhoKnows_backend.Controllers
