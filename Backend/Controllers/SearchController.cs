@@ -59,8 +59,8 @@ namespace WhoKnows_backend.Controllers
                     var scrapeResultSearch = string.IsNullOrEmpty(q)
                       ? new List<Page>()
                       : await _context.Pages
-                          .Where(p => p.Language == language && p.Content.Contains(q))
-                          .ToListAsync();
+                            .Where(p => p.Language == language && p.Content.ToLower().Contains(q.ToLower()))
+                            .ToListAsync();
                     if (!scrapeResultSearch.Any())
                     {
                         return BadRequest("No valid data scraped.");
