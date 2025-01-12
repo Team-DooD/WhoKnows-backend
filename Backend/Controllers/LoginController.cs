@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -19,12 +20,14 @@ namespace WhoKnows_backend.Controllers
     {
         private readonly WhoknowsContext _context;
         private readonly PasswordHasher<User> _passwordHasher;
+        private readonly IConfiguration _configuration;
 
-        // Inject the DbContext into the controllerssss
-        public LoginController(WhoknowsContext context)
+        // Inject the DbContext (the database context) into the controllerssss
+        public LoginController(WhoknowsContext context, IConfiguration configuration)
         {
             _context = context;
             _passwordHasher = new PasswordHasher<User>();
+            _configuration = configuration;
         }
 
         [HttpPost("")]
@@ -35,19 +38,42 @@ namespace WhoKnows_backend.Controllers
                 return BadRequest("Invalid login request.");
             }
 
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == request.Username);
+            // Secret key from environment variables or configuration
+            var secretKey = _configuration["google:SecretKey"];
 
+            if (string.IsNullOrEmpty(secretKey))
+            {
+                return StatusCode(500, "CAPTCHA secret key not configured.");
+            }
+
+            // CAPTCHA part
+            using var httpClient = new HttpClient();
+            var googleVerificationUrl = $"https://www.google.com/recaptcha/api/siteverify?secret={secretKey}&response={request.CaptchaResponse}";
+
+            var googleResponse = await httpClient.GetAsync(googleVerificationUrl);
+            if (!googleResponse.IsSuccessStatusCode)
+            {
+                return StatusCode(500, "Failed to verify CAPTCHA.");
+            }
+
+            var captchaVerificationResult = await googleResponse.Content.ReadFromJsonAsync<GoogleCaptchaVerificationResponse>();
+            if (captchaVerificationResult == null || !captchaVerificationResult.Success)
+            {
+                return BadRequest("CAPTCHA validation failed.");
+            }
+
+            // Authenticating the user ->
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == request.Username);
             if (user == null)
             {
                 return Unauthorized("Invalid username or password");
             }
 
-            // Initialize PasswordHasher
+            // Initialize PasswordHasher function here
             var passwordHasher = new PasswordHasher<User>();
 
             // Verify the hashed password
             var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.Password, request.Password);
-
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
             {
                 return Unauthorized("Invalid username or password");
@@ -55,7 +81,11 @@ namespace WhoKnows_backend.Controllers
 
             // Generate JWT Token
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("123456789123456N123456789123456N"); // Store securely, e.g., in configuration
+            // PLZ Store securely, e.g., in configuration
+
+            var keyToUse = _configuration["Jwt:SecretKey"];
+
+            var key = Encoding.ASCII.GetBytes(keyToUse); 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, user.Id.ToString()) }),
@@ -72,9 +102,26 @@ namespace WhoKnows_backend.Controllers
         {
             public string Username { get; set; } = string.Empty;
             public string Password { get; set; } = string.Empty;
+
+            public string CaptchaResponse { get; set; } = string.Empty;
         }
 
-        // Example of an authenticated endpoint
+        public class GoogleCaptchaVerificationResponse
+        {
+            [JsonProperty("success")]
+            public bool Success { get; set; }
+
+            [JsonProperty("challenge_ts")]
+            public DateTime ChallengeTimestamp { get; set; }
+
+            [JsonProperty("hostname")]
+            public string Hostname { get; set; }
+
+            [JsonProperty("error-codes")]
+            public List<string> ErrorCodes { get; set; }
+        }
+
+        // Example of an authenticated endpoint for testing (deprecated)
         [Authorize]
         [HttpGet("authenticated-endpoint")]
         public IActionResult AuthenticatedEndpoint()
@@ -89,17 +136,17 @@ namespace WhoKnows_backend.Controllers
         }
 
 
-        private bool VerifyPassword(string storedPassword, string inputPassword)
-        {
-            // Implement your password verification logic here (e.g., hashing)
-            return storedPassword == inputPassword; // Simplified for demonstration
-        }
+        //private bool VerifyPassword(string storedPassword, string inputPassword)
+        //{
+        //    // Implement your password verification logic here (e.g., hashing)
+        //    return storedPassword == inputPassword; // Simplified for demonstration
+        //}
 
-        private string HashPassword(string password)
-        {
-            // Implement your password hashing logic here
-            return password; // Simplified for demonstration
-        }
+        //private string HashPassword(string password)
+        //{
+        //    // Implement your password hashing logic here
+        //    return password; // Simplified for demonstration
+        //}
 
 
     }

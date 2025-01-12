@@ -91,6 +91,10 @@ jobs:
               "Issuer": "${{ secrets.JWT_ISSUER }}",
               "Audience": "${{ secrets.JWT_AUDIENCE }}"
             },
+            "google": {
+                "SecretKey": "${{ secrets.GOOGLE_SECRETKEY }}"
+            
+            },
               "apiKey": {
                 "apiKey": "${{ secrets.API_KEY }}"
                 }
