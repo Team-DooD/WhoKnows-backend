@@ -3,7 +3,7 @@ name: Deploy dotnet API Gateway Backend to Remote VM
 on:
   push:
     branches:
-      - main
+      - production/*
 
 jobs:
   deploy:
