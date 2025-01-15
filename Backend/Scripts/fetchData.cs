@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using HtmlAgilityPack;  
 
 
-namespace WhoKnows_backend.Scripts  // You can modify the namespace as needed
+namespace WhoKnows_backend.Scripts
 {
-    // This class contains the logic for fetching and processing data from Wikipedia.
+    // This class contains our magic the logic for fetching and processing data from Wikipedia.
     public static class FetchData
     {
-        // Method to fetch combined paragraphs from a Wikipedia page
+        // fetch combined paragraphs from a Wikipedia
         public static async Task<string> FetchCombinedParagraphs(string keyword)
         {
             string url = $"https://en.wikipedia.org/wiki/{Uri.EscapeDataString(keyword)}";
@@ -21,14 +21,16 @@ namespace WhoKnows_backend.Scripts  // You can modify the namespace as needed
             {
                 // Fetch the HTML content from the Wikipedia page
                 HttpResponseMessage response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode(); // Ensure the HTTP request is successful
+                response.EnsureSuccessStatusCode(); 
 
                 // Read the HTML content of the page
                 string htmlContent = await response.Content.ReadAsStringAsync();
-                var htmlDoc = new HtmlDocument();  // Using HtmlAgilityPack's HtmlDocument
-                htmlDoc.LoadHtml(htmlContent);    // Load HTML into HtmlDocument
+                // Using HtmlAgilityPack's HtmlDocument
+                var htmlDoc = new HtmlDocument();
+                // Load HTML into HtmlDocument
+                htmlDoc.LoadHtml(htmlContent); 
 
-                // Extract the title from the page
+                // Extract the title from the page here
                 string title = htmlDoc.DocumentNode.SelectSingleNode("//h1")?.InnerText ?? "Unknown Title";
 
                 // Extract the first 10 paragraphs from the page
@@ -37,7 +39,8 @@ namespace WhoKnows_backend.Scripts  // You can modify the namespace as needed
                                               .Select(p => p.InnerText)
                                               .Aggregate((current, next) => current + " " + next) ?? "";
 
-                // Create a result object with the combined data
+                // Result object with the combined scraped formatted data
+               
                 var result = new[]
                 {
                     new
@@ -52,12 +55,12 @@ namespace WhoKnows_backend.Scripts  // You can modify the namespace as needed
                     }
                 };
 
-                // Return the result as a JSON string
+                // Result as a JSON string
                 return JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
             }
             catch (HttpRequestException e)
             {
-                // Handle any errors that occur during the HTTP request
+                // Handle any errors then give empty result with error content
                 var errorResult = new[]
                 {
                     new
@@ -72,7 +75,7 @@ namespace WhoKnows_backend.Scripts  // You can modify the namespace as needed
                     }
                 };
 
-                // Return the error result as a JSON string
+             
                 return JsonSerializer.Serialize(errorResult, new JsonSerializerOptions { WriteIndented = true });
             }
         }

@@ -38,7 +38,6 @@ namespace WhoKnows_backend.Controllers
                 return BadRequest("Invalid login request.");
             }
 
-            // Secret key from environment variables or configuration
             var secretKey = _configuration["google:SecretKey"];
 
             if (string.IsNullOrEmpty(secretKey))
@@ -72,17 +71,17 @@ namespace WhoKnows_backend.Controllers
             // Initialize PasswordHasher function here
             var passwordHasher = new PasswordHasher<User>();
 
-            // Verify the hashed password
+            // Verify the hashed password using identity libary function
             var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.Password, request.Password);
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
             {
                 return Unauthorized("Invalid username or password");
             }
 
-            // Generate JWT Token
+            // Generate JWT Token here
             var tokenHandler = new JwtSecurityTokenHandler();
-            // PLZ Store securely, e.g., in configuration
 
+            // PLZ Store securely, e.g., in configuration
             var keyToUse = _configuration["Jwt:SecretKey"];
 
             var key = Encoding.ASCII.GetBytes(keyToUse); 
@@ -120,34 +119,6 @@ namespace WhoKnows_backend.Controllers
             [JsonProperty("error-codes")]
             public List<string> ErrorCodes { get; set; }
         }
-
-        // Example of an authenticated endpoint for testing (deprecated)
-        [Authorize]
-        [HttpGet("authenticated-endpoint")]
-        public IActionResult AuthenticatedEndpoint()
-        {
-            // Check if the user is logged in
-            //if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserId")))
-            //{
-            //    return Unauthorized("You are not logged in");
-            //}
-
-            return Ok("You are authenticated");
-        }
-
-
-        //private bool VerifyPassword(string storedPassword, string inputPassword)
-        //{
-        //    // Implement your password verification logic here (e.g., hashing)
-        //    return storedPassword == inputPassword; // Simplified for demonstration
-        //}
-
-        //private string HashPassword(string password)
-        //{
-        //    // Implement your password hashing logic here
-        //    return password; // Simplified for demonstration
-        //}
-
 
     }
 }

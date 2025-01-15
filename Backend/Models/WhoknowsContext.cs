@@ -39,18 +39,18 @@ public partial class WhoknowsContext : DbContext
     {
         modelBuilder.Entity<Page>(entity =>
         {
-            // Set Id as the primary key and ensure it's auto-incremented
+            // Set Id as the primary key and ensure it's auto-incremented here
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            // Drop the unique constraint on Title if it was set previously
+            // Drop the unique constraint on Title if it was set previously FIX
             entity.HasIndex(e => e.Title, "title").IsUnique(false);
 
             entity.ToTable("pages");
 
-            // Define unique index for the Url column (if needed)
+            // Define unique indexing
             entity.HasIndex(e => e.Url, "url_idx").IsUnique();
 
-            // Map columns to table fields
+            // Map columns
             entity.Property(e => e.Title).HasColumnName("title");
             entity.Property(e => e.CreatedBy).HasColumnName("createdBy");
 
@@ -58,13 +58,14 @@ public partial class WhoknowsContext : DbContext
                 .HasColumnType("text")
                 .HasColumnName("content");
 
-            // Define Id as the primary key and set it to auto-increment (ValueGeneratedOnAdd)
+            // Id as the primary key and set it to auto-increment (ValueGeneratedOnAdd function)
+            // auto-increment for new records
             entity.Property(e => e.Id)
                 .HasColumnName("id")
-                .ValueGeneratedOnAdd();  // Ensure auto-increment for new records
+                .ValueGeneratedOnAdd();  
 
             entity.Property(e => e.Language)
-                .HasDefaultValueSql("'en'") // Set default value for Language if not provided
+                .HasDefaultValueSql("'en'")
                 .HasColumnType("enum('en','da')")
                 .HasColumnName("language");
 

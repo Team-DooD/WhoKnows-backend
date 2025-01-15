@@ -19,7 +19,6 @@ namespace WhoKnows_backend.Controllers
             _passwordHasher = new PasswordHasher<User>();
         }
 
-        // Register new user endpoint
         [HttpPost("")]
         public async Task<IActionResult> Register([FromBody] DTO.RegisterRequest registerRequest)
         {
@@ -28,24 +27,24 @@ namespace WhoKnows_backend.Controllers
                 return BadRequest("Invalid registration request.");
             }
 
-            // Check if user already exists
+            // Check user already exists in db
             var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == registerRequest.Username);
             if (existingUser != null)
             {
                 return BadRequest("Username already taken.");
             }
 
-            // Create new user and hash the password
+            // Create new user and hash the password using identity
             var newUser = new User
             {
                 Username = registerRequest.Username,
                 Email = registerRequest.Email
             };
 
-            // Hash the password and store the hash
+            // Hash the password and store the hash again
             newUser.Password = _passwordHasher.HashPassword(newUser, registerRequest.Password);
 
-            // Add the new user to the database
+            // new user to the database here
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 

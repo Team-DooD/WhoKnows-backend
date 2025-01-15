@@ -29,57 +29,56 @@ namespace WhoKnows_backend.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Search([FromQuery] string q = null, [FromQuery] string language = "en")
         {
-
-            // Starts the timer for meassuring the search duration
-            var timer = searchDurationHistogram.NewTimer();
-
-            // Increment the timer for search request
-            searchRequestCounter.Inc();
-
-            // The search logic itself
-            var searchResults = string.IsNullOrEmpty(q)
-                ? new List<Page>()
-                : await _context.Pages
-                    .Where(p => p.Language == language && p.Content.ToLower().Contains(q.ToLower()))
-                    .ToListAsync();
-
-
-            if (!searchResults.Any())
+            // Starts the timer for measuring the search duration
+            using (var timer = searchDurationHistogram.NewTimer()) 
             {
-                string scarpeResult = await FetchData.FetchCombinedParagraphs(q);
+                // Increment the counter for search requests for benchmarking
+                searchRequestCounter.Inc();
 
-                var scrapedPages = System.Text.Json.JsonSerializer.Deserialize<List<Page>>(scarpeResult);
+                // The mighty search logic itself --->>
+                var searchResults = string.IsNullOrEmpty(q)
+                    ? new List<Page>()
+                    : await _context.Pages
+                        .Where(p => p.Language == language && p.Content.ToLower().Contains(q.ToLower()))
+                        .ToListAsync();
 
-
-                if (scrapedPages[0].Content.Length > 240)
+                if (!searchResults.Any())
                 {
-                    _context.Pages.AddRange(scrapedPages);
-                    await _context.SaveChangesAsync();
+                    string scrapeResult = await FetchData.FetchCombinedParagraphs(q);
 
-                    var scrapeResultSearch = string.IsNullOrEmpty(q)
-                      ? new List<Page>()
-                      : await _context.Pages
-                            .Where(p => p.Language == language && p.Content.ToLower().Contains(q.ToLower()))
-                            .ToListAsync();
-                    if (!scrapeResultSearch.Any())
+                    var scrapedPages = System.Text.Json.JsonSerializer.Deserialize<List<Page>>(scrapeResult);
+
+                    if (scrapedPages[0].Content.Length > 240)
                     {
-                        return BadRequest("No valid data scraped.");
+                        _context.Pages.AddRange(scrapedPages);
+                        await _context.SaveChangesAsync();
+
+                        var scrapeResultSearch = string.IsNullOrEmpty(q)
+                          ? new List<Page>()
+                          : await _context.Pages
+                                .Where(p => p.Language == language && p.Content.ToLower().Contains(q.ToLower()))
+                                .ToListAsync();
+
+                        if (!scrapeResultSearch.Any())
+                        {
+                            return BadRequest("No valid data scraped.");
+                        }
+                        else
+                        {
+                            return Ok(scrapeResultSearch);
+                        }
                     }
                     else
                     {
-                        return Ok(scrapeResultSearch);
+                        return BadRequest("No valid data scraped.");
                     }
-
                 }
                 else
                 {
-                    return BadRequest("No valid data scraped.");
+                    return Ok(searchResults);
                 }
-            }
-            else
-            {
-                return Ok(searchResults);
-            }
+            } // Now we log the duration to Prometheus
         }
+
     }
 }
